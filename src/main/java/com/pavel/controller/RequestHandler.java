@@ -13,12 +13,33 @@ import java.util.Map;
 
 
 public class RequestHandler {
+    /**
+     * List, содержащий весь запрос
+     */
     private List<String> inputRequest;
+    /**
+     * Map, содержащий отфармотированые данные запроса: header и его значение
+     */
     private Map<String, String> httpInfo;
+    /**
+     * Содержит пользовательские данные, полученные из запроса
+     */
     private List<String> requestParameters;
+    /**
+     * Запрашиваемый url
+     */
     private String url;
+    /**
+     * Запрашиваемый http метод
+     */
     private String method;
+    /**
+     * true, если входной запрос корректный и false, если неверен
+     */
     private boolean correctRequest;
+    /**
+     * @see Logger#getLogger
+     */
     private static Logger log = Logger.getLogger(RequestHandler.class);
 
     public RequestHandler(final InputStream input) {
@@ -69,7 +90,7 @@ public class RequestHandler {
 
     /**
      * Метод, получающий URI из запроса клиента
-     * @return URI
+     * @return url запроса
      */
     private String getRequestURI() {
         if (inputRequest.size() != 0) {
@@ -84,7 +105,7 @@ public class RequestHandler {
     /**
      * Метод, формирующий headers из запроса клиента.
      * @param input
-     * @return httpInfo
+     * @return список, содержащий header и его значение.
      * @throws IOException
      */
     public Map<String, String> getRequestHeaders(List<String> input) throws IOException {
@@ -98,7 +119,7 @@ public class RequestHandler {
 
     /**
      * Метод, получающий тип Http запроса
-     * @return method
+     * @return метод http запроса
      */
     private String getRequestMethod() {
         String method = null;
@@ -115,7 +136,7 @@ public class RequestHandler {
 
     /**
      * Метод, формирующий все параметры из запрсо клиента
-     * @return requestParameters
+     * @return requestParameters - пользовательские данные
      */
     private List<String> getRequestParameters() {
         if (method.equals(HttpMethod.GET.getMethod()))
@@ -127,7 +148,7 @@ public class RequestHandler {
 
     /**
      * Метод, возвращающий параметры запроса в виде строки.
-     * @return parameters
+     * @return parameters - пользовательские данные в виде строки
      */
     public String getRequestParametersToString() {
         StringBuilder parameters = new StringBuilder();
@@ -152,7 +173,7 @@ public class RequestHandler {
 
     /**
      * Метод, проверяющий корректность входящего запроса и возвращающий true или false
-     * @return boolean
+     * @return false - если входные данные неверны, и true - если не верны.
      */
     public boolean isCorrectRequest() {
         if (correctRequest)

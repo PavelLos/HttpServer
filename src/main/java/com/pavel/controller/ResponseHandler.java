@@ -1,6 +1,5 @@
 package com.pavel.controller;
 
-import com.pavel.Main;
 import com.pavel.constants.HttpStatus;
 import com.pavel.constants.ServerPath;
 import com.pavel.view.ServerWindow;
@@ -14,9 +13,18 @@ import java.util.TimeZone;
 
 
 public class ResponseHandler {
+    /**
+     * @see Logger#getLogger
+     */
     private static Logger log = Logger.getLogger(ResponseHandler.class);
 
 
+    /**
+     * Метод, формирующий ответ GET запроса
+     * @param url - запрашиваемый ресурс
+     * @return сформированный ответ
+     * @throws IOException
+     */
     public byte[] createGetResponse(String url) throws IOException {
         String path = HttpParser.getPath(url);
         byte[] document;
@@ -37,6 +45,12 @@ public class ResponseHandler {
         return getResponseByte(headers, document);
     }
 
+    /**
+     * Метод, формирующий ответ POST запроса
+     * @param url - запрашиваемый ресурс
+     * @return сформированный ответ
+     * @throws IOException
+     */
     public byte[] createPostResponse(String url, String documentText) throws IOException {
         String path = HttpParser.getPath(url);
         byte[] document;
@@ -57,6 +71,12 @@ public class ResponseHandler {
         return getResponseByte(headers, document);
     }
 
+    /**
+     * Метод, формирующий ответ HEAD запроса
+     * @param url - запрашиваемый ресурс
+     * @return сформированный ответ
+     * @throws IOException
+     */
     public byte[] createHeadResponse(String url) throws IOException {
         String path = HttpParser.getPath(url);
         byte[] document;
@@ -78,6 +98,13 @@ public class ResponseHandler {
         return headers;
     }
 
+    /**
+     * Метод, формирующий заголовки для ответа сервера
+     * @param status - статус ответа
+     * @param length - длина отправляемого ресурса
+     * @param contentType - тип отправляемого ресурса
+     * @return список сформированных заголовков
+     */
     private byte[] createHeaders(String status, int length, String contentType) {
         String responseHeader =
                 "HTTP/1.1 " + status + "\r\n" +
@@ -92,6 +119,11 @@ public class ResponseHandler {
         return responseHeader.getBytes();
     }
 
+    /**
+     * Формирование содержания документа для ответа
+     * @param path - путь к объекту
+     * @return содержание для ответа
+     */
     private byte[] createDocument(String path) {
         InputStream file = null;
         byte[] fileContent = null;
@@ -105,6 +137,12 @@ public class ResponseHandler {
         return fileContent;
     }
 
+    /**
+     * Формирование содержания документа для ответа
+     * @param path - путь к документу
+     * @param documentText - содержание для ответа
+     * @return содержание для ответа
+     */
     private byte[] createDocument(String path, String documentText) {
         StringBuilder document = new StringBuilder();
         byte[] fileContent = null;
@@ -131,6 +169,10 @@ public class ResponseHandler {
         return fileContent;
     }
 
+    /**
+     * Формирование даты для заголовка ответа сервера
+     * @return дата
+     */
     private String createDate() {
         SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -144,6 +186,12 @@ public class ResponseHandler {
         return String.valueOf(date);
     }
 
+    /**
+     * Формирование массива байт для ответа
+     * @param headers - заголовки ответа сервера
+     * @param document - содержание документа для ответа
+     * @return
+     */
     private byte[] getResponseByte(byte[] headers, byte[] document) {
         int hLength = headers.length;
         int dLength = document.length;
@@ -153,6 +201,11 @@ public class ResponseHandler {
         return response;
     }
 
+    /**
+     * Проверка наличия документа по указываемому пути
+     * @param path
+     * @return
+     */
     private boolean checkPath(String path) {
         try (InputStream inputStream = new FileInputStream(path)) {
             if (inputStream != null)
@@ -165,6 +218,11 @@ public class ResponseHandler {
         }
     }
 
+    /**
+     * Формирование заголовка Content-Type для ответа сервера
+     * @param path - путь к запрашиваемому объекту
+     * @return значение заголовка Content-Type
+     */
     private String getContentType(String path) {
         int point = path.lastIndexOf(".");
         String contentType = "text/html";

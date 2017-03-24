@@ -63,7 +63,7 @@ public class HttpParser {
     private static final Pattern patternMETHOD = Pattern.compile(REQUEST_METHOD);
 
     /**
-     * Метод, обрабатывающий входной запрос
+     * Метод, обрабатывающий входной запрос для получения списка headers и их значений.
      * @param request запрос клиента серверу
      * @return возвращает название всех запросов и их содержания
      */
@@ -78,6 +78,7 @@ public class HttpParser {
     }
 
     /**
+     * Метод, получающий из запроса url.
      * @param firstStrFromRequest строка содержащая URL
      * @return если соответствует протоколу запроса HTTP, то URL. Иначе null
      */
@@ -89,6 +90,7 @@ public class HttpParser {
     }
 
     /**
+     * Метод, получающий из запроса http метод
      * @param request строка содержащая URL
      * @return если соответствует протоколу запроса HTTP, то возвращает соответствуюший метод. Иначе null
      */
@@ -100,6 +102,7 @@ public class HttpParser {
     }
 
     /**
+     * Метод, обрабатываюший полученную url и возвращаюший путь к ресурсу.
      * @param url строка URL
      * @return путь к файлу
      */
@@ -122,6 +125,7 @@ public class HttpParser {
     }
 
     /**
+     * Метод, получающий пользовательские данные из запроса.
      * @param request параметр запроса.
      * @return входные параметры
      */
