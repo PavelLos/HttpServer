@@ -51,7 +51,7 @@ public class Configurations {
 
     private String configDirectoryPath() {
         String pathJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toString();
-        if(pathJar.contains("/http-server-socket-1.0-SNAPSHOT.jar")) {
+        if (pathJar.contains("/http-server-socket-1.0-SNAPSHOT.jar")) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             pathJar = pathJar.substring(pathJar.indexOf("/") + 1, pathJar.indexOf("http-server-socket-1.0-SNAPSHOT.jar"));
             return pathJar + ServerPath.CONFIG_PATH;

@@ -1,6 +1,5 @@
 package com.pavel.controller;
 
-import com.pavel.Main;
 import com.pavel.constants.ServerPath;
 
 import java.util.ArrayList;
@@ -9,43 +8,101 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-
+/**
+ * Класс для проверки входных запросов от клиента, а так же выделяющий необходимые заголовки для сервера
+ */
 public class HttpParser {
+    /**
+     * константа содержащая строку разделитель для запросов
+     *
+     * @value :\\s
+     */
     private static final String REQUEST_HEADER_SPLIT = ":\\s";
+    /**
+     * константа содержащая регулярное выражение для запроса серверу от клиента
+     *
+     * @value ^[A-Za-z-]+:\s.*$
+     */
     private static final String REQUEST_HEADER = "^[A-Za-z-]+:\\s.*$";
+    /**
+     * константа содержащая регулярное выражение для запроса URL
+     *
+     * @value ^(GET|POST|HEAD).+
+     */
     private static final String REQUEST_URL = "^(GET|POST|HEAD).+";
+    /**
+     * константа содержащая регулярное выражение для выбора метода для запроса
+     *
+     * @value (GET|POST|HEAD).+
+     */
     private static final String REQUEST_METHOD = "(GET|POST|HEAD).+";
 
+    /**
+     * шаблон для ругулярного выражения
+     *
+     * @see HttpParser#REQUEST_HEADER_SPLIT
+     */
     private static final Pattern patternSplit = Pattern.compile(REQUEST_HEADER_SPLIT);
+    /**
+     * шаблон для ругулярного выражения
+     *
+     * @see HttpParser#REQUEST_HEADER
+     */
     private static final Pattern patternHeader = Pattern.compile(REQUEST_HEADER);
+    /**
+     * шаблон для ругулярного выражения
+     *
+     * @see HttpParser#REQUEST_URL
+     */
     private static final Pattern patternURL = Pattern.compile(REQUEST_URL);
+    /**
+     * шаблон для ругулярного выражения
+     *
+     * @see HttpParser#REQUEST_METHOD
+     */
     private static final Pattern patternMETHOD = Pattern.compile(REQUEST_METHOD);
 
-    public static Map getSplitRequest(final String string) {
-        if (patternHeader.matcher(string).matches()) {
-            String[] strings = patternSplit.split(string);
+    /**
+     * Метод, обрабатывающий входной запрос
+     * @param request запрос клиента серверу
+     * @return возвращает название всех запросов и их содержания
+     */
+    public static Map getSplitRequest(final String request) {
+        if (patternHeader.matcher(request).matches()) {
+            String[] strings = patternSplit.split(request);
             Map httpInfo = new HashMap<String, String>();
             httpInfo.put(strings[0], strings[1]);
             return httpInfo;
         }
-        //if()
         return null;
     }
 
-    public static String getUrl(final String string) {
-        if (patternURL.matcher(string).matches()) {
-            return string.substring(string.indexOf(" ") + 1, string.indexOf(" ", 5));
+    /**
+     * @param firstStrFromRequest строка содержащая URL
+     * @return если соответствует протоколу запроса HTTP, то URL. Иначе null
+     */
+    public static String getUrl(final String firstStrFromRequest) {
+        if (patternURL.matcher(firstStrFromRequest).matches()) {
+            return firstStrFromRequest.substring(firstStrFromRequest.indexOf(" ") + 1, firstStrFromRequest.indexOf(" ", 5));
         }
         return null;
     }
 
-    public static String getMethod(final String string) {
-        if (patternMETHOD.matcher(string).matches()) {
-            return string.substring(0, string.indexOf(" "));
+    /**
+     * @param request строка содержащая URL
+     * @return если соответствует протоколу запроса HTTP, то возвращает соответствуюший метод. Иначе null
+     */
+    public static String getMethod(final String request) {
+        if (patternMETHOD.matcher(request).matches()) {
+            return request.substring(0, request.indexOf(" "));
         }
         return null;
     }
 
+    /**
+     * @param url строка URL
+     * @return путь к файлу
+     */
     public static String getPath(String url) {
         String path = ServerPath.PATH;
         int i = url.indexOf("?");
@@ -59,19 +116,20 @@ public class HttpParser {
         char a;
         for (i = 0; i < url.length(); i++) {
             a = url.charAt(i);
-            /*if (a == '/')
-                path = path + File.separator;
-            else*/
             path = path + a;
         }
         return path;
     }
 
-    public static List<String> getValues(String string) {
+    /**
+     * @param request параметр запроса.
+     * @return входные параметры
+     */
+    public static List<String> getValues(String request) {
         List<String> parameters = new ArrayList<>();
-        String stringOfValues = string;
-        if (string.contains("?")) {
-            stringOfValues = string.substring(string.indexOf("?"));
+        String stringOfValues = request;
+        if (request.contains("?")) {
+            stringOfValues = request.substring(request.indexOf("?"));
         }
         String[] values = stringOfValues.split("&");
         for (String str : values) {

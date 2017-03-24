@@ -1,6 +1,8 @@
 package com.pavel.constants;
 
-
+/**
+ * Перечесление возможных запросов для сервера.
+ */
 public enum HttpMethod {
     GET("GET"),
     POST("POST"),

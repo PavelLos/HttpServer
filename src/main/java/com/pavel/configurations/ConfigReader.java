@@ -1,13 +1,14 @@
 package com.pavel.configurations;
 
 
-import com.pavel.Main;
-import com.pavel.constants.ServerPath;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Created by pasha on 18.03.2017.

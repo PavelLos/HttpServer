@@ -1,5 +1,5 @@
 .idea
-server
+http_server
 *.iml
 log.log
 target
