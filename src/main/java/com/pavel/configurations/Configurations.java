@@ -91,10 +91,10 @@ public class Configurations {
      */
     private String configDirectoryPath() {
         String pathJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toString();
-        if (pathJar.contains("/http-server-socket-1.0-SNAPSHOT.jar")) {
-            pathJar = pathJar.substring(pathJar.indexOf("/") + 1, pathJar.indexOf("http-server-socket-1.0-SNAPSHOT.jar"));
+        if (pathJar.contains("http-server-1.0-SNAPSHOT")) {
+            pathJar = pathJar.substring(pathJar.indexOf("/") + 1, pathJar.indexOf("http-server-1.0-SNAPSHOT"));
             pathToServer = pathJar;
-            return pathJar + ServerPath.CONFIG_PATH;
+            return pathJar + ServerPath.CONFIG_DIRECTORY;
         } else if (pathJar.contains("HttpServer")) {
             pathToServer = pathJar.substring(pathJar.indexOf("/") + 1, pathJar.indexOf("target"));
         }
