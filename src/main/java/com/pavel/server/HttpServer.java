@@ -4,6 +4,7 @@ package com.pavel.server;
 import com.pavel.constants.HttpMethod;
 import com.pavel.controller.RequestHandler;
 import com.pavel.controller.ResponseHandler;
+import com.pavel.view.ServerWindow;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -105,6 +106,7 @@ public class HttpServer {
                 correctResponse = false;
             } catch (IOException e) {
                 log.error("Response не отправлен");
+                ServerWindow.getInstance().printInfo("Response не отправлен");
             }
         }
     }

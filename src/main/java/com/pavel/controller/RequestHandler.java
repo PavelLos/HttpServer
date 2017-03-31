@@ -78,6 +78,7 @@ public class RequestHandler {
             byte[] inputBytes = new byte[size];
             input.read(inputBytes);
             String str = new String(inputBytes);
+            log.info(str);
             ServerWindow.getInstance().printInfo(str);
             String[] strings = str.split("\\r\\n");
             for (String s : strings) {
@@ -171,10 +172,6 @@ public class RequestHandler {
 
     public String getMethod() {
         return method;
-    }
-
-    public List<String> getInputRequest() {
-        return inputRequest;
     }
 
     /**

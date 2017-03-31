@@ -2,6 +2,8 @@ package com.pavel.controller;
 
 import com.pavel.configurations.Configurations;
 import com.pavel.constants.ServerPath;
+import com.pavel.view.ServerWindow;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 
@@ -9,6 +11,10 @@ import java.io.*;
  * Класс, отвечающий за вызов подпрограмм
  */
 public class StartJarFile {
+    /**
+     * @see Logger#getLogger
+     */
+    private static Logger log = Logger.getLogger(StartJarFile.class);
     /**
      * @see InputStream#InputStream()
      */
@@ -48,7 +54,8 @@ public class StartJarFile {
         try {
             process = createProcess(path, documentText).start();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Запуск jar не удался");
+            ServerWindow.getInstance().printInfo("Запуск jar не удался");
         }
         inputStream = process.getInputStream();
     }
@@ -83,7 +90,8 @@ public class StartJarFile {
                     document.append(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Ошибкачтения документа");
+            ServerWindow.getInstance().printInfo("Ошибкачтения документа");
         }
         return document.toString().getBytes();
     }

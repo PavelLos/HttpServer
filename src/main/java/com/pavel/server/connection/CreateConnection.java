@@ -46,6 +46,7 @@ public class CreateConnection extends Thread {
         try {
             serverSocket = new ServerSocket(PORT);
             log.info("Server socket created in PORT: " + PORT);
+            ServerWindow.getInstance().printInfo("Server socket created in PORT: " + PORT);
         } catch (IOException e) {
             log.error("Client socket connection error");
             ServerWindow.getInstance().printInfo("Client socket connection error");
@@ -83,9 +84,5 @@ public class CreateConnection extends Thread {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void setPORT(int PORT) {
-        this.PORT = PORT;
     }
 }

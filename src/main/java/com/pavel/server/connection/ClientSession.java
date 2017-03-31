@@ -66,8 +66,6 @@ public class ClientSession extends Thread {
                 httpServer.httpMethod(input);
                 httpServer.sendResponse(output);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             try {
                 if (output != null) {
@@ -83,6 +81,7 @@ public class ClientSession extends Thread {
                 }
             } catch (IOException e) {
                 log.error("Client: " + clientSocket.getInetAddress() + " can't disconnect");
+                ServerWindow.getInstance().printInfo("Client: " + clientSocket.getInetAddress() + " can't disconnect");
             }
         }
     }

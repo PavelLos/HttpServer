@@ -34,12 +34,14 @@ public class ResponseHandler {
         byte[] headers;
         if (checkPath(path)) {
             log.info("Request success: " + HttpStatus.STATUS_200);
+            ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
             document = createDocument(path);
             headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
                     document.length,
                     getContentType(path));
         } else {
             log.info("Request Error: " + HttpStatus.STATUS_404);
+            ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_404);
             document = createDocument(ServerPath.NOT_FOUND);
             headers = createHeaders(HttpStatus.STATUS_404.getConstant(),
                     document.length,
@@ -61,13 +63,14 @@ public class ResponseHandler {
         byte[] headers;
         if (checkPath(path)) {
             log.info("Request success: " + HttpStatus.STATUS_200);
-            //document = createDocument(path, documentText);
+            ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
             document = StartJarFile.getInstance().getDocument(path, documentText);
             headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
                     document.length,
                     getContentType(path));
         } else {
             log.info("Request Error: " + HttpStatus.STATUS_404);
+            ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_404);
             document = createDocument(ServerPath.NOT_FOUND);
             headers = createHeaders(HttpStatus.STATUS_404.getConstant(),
                     document.length,
@@ -92,12 +95,14 @@ public class ResponseHandler {
                     document.length,
                     getContentType(path));
             log.info("Request success: " + HttpStatus.STATUS_200);
+            ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
         } else {
             document = createDocument(ServerPath.NOT_FOUND);
             headers = createHeaders(HttpStatus.STATUS_404.getConstant(),
                     document.length,
                     getContentType(path));
             log.info("Request Error: " + HttpStatus.STATUS_404);
+            ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_404);
         }
 
         return headers;
@@ -121,6 +126,7 @@ public class ResponseHandler {
                         "Connection: keep-alive\r\n" +
                         "Last-modified: Mon, 15 Jun 2017 21:53:08 GMT\r\n" +
                         "\r\n";
+        log.info(responseHeader);
         ServerWindow.getInstance().printInfo(responseHeader);
         return responseHeader.getBytes();
     }
