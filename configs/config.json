@@ -1,5 +1,7 @@
 {
   "PORT": 8080,
   "HOST": "localhost",
-  "PAGES_PATH": "pages"
+  "PAGES_PATH": "pages",
+  "JAR_PATH": "jar-files",
+  "post_show": "jar-post_example-1.0-SNAPSHOT"
 }

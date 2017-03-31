@@ -1,5 +1,6 @@
 package com.pavel.server.connection;
 
+import com.pavel.configurations.Configurations;
 import com.pavel.view.ServerWindow;
 import org.apache.log4j.Logger;
 
@@ -9,18 +10,37 @@ import java.net.Socket;
 
 
 public class CreateConnection extends Thread {
+    /**
+     * @see ServerSocket#ServerSocket()
+     */
     private ServerSocket serverSocket;
+    /**
+     * @see Socket#Socket()
+     */
     private Socket clientSocket;
 
-    private int PORT = 8080;
+    /**
+     * Порт для подключения
+     */
+    public int PORT = 8080;
 
+    /**
+     * @see Logger#getLogger(Class)
+     */
     private static final Logger log = Logger.getLogger(CreateConnection.class);
 
+    /**
+     * Создние экземпляра
+     */
     public CreateConnection() {
         serverSocket = null;
         clientSocket = null;
+        PORT = Configurations.getInstance().getPort();
     }
 
+    /**
+     * Создание сервера и подключение клиентов к серверу
+     */
     @Override
     public void run() {
         try {
@@ -48,7 +68,9 @@ public class CreateConnection extends Thread {
         }
     }
 
-
+    /**
+     * Остановка работы сервера
+     */
     public void stopServer() {
         if (serverSocket != null) {
             try {

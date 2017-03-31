@@ -15,25 +15,21 @@ public class HttpParser {
     /**
      * константа содержащая строку разделитель для запросов
      *
-     * @value :\\s
      */
     private static final String REQUEST_HEADER_SPLIT = ":\\s";
     /**
      * константа содержащая регулярное выражение для запроса серверу от клиента
      *
-     * @value ^[A-Za-z-]+:\s.*$
      */
     private static final String REQUEST_HEADER = "^[A-Za-z-]+:\\s.*$";
     /**
      * константа содержащая регулярное выражение для запроса URL
      *
-     * @value ^(GET|POST|HEAD).+
      */
     private static final String REQUEST_URL = "^(GET|POST|HEAD).+";
     /**
      * константа содержащая регулярное выражение для выбора метода для запроса
      *
-     * @value (GET|POST|HEAD).+
      */
     private static final String REQUEST_METHOD = "(GET|POST|HEAD).+";
 
@@ -64,6 +60,7 @@ public class HttpParser {
 
     /**
      * Метод, обрабатывающий входной запрос для получения списка headers и их значений.
+     *
      * @param request запрос клиента серверу
      * @return возвращает название всех запросов и их содержания
      */
@@ -79,8 +76,9 @@ public class HttpParser {
 
     /**
      * Метод, получающий из запроса url.
+     *
      * @param firstStrFromRequest строка содержащая URL
-     * @return если соответствует протоколу запроса HTTP, то URL. Иначе null
+     * @return url запроса
      */
     public static String getUrl(final String firstStrFromRequest) {
         if (patternURL.matcher(firstStrFromRequest).matches()) {
@@ -91,8 +89,9 @@ public class HttpParser {
 
     /**
      * Метод, получающий из запроса http метод
+     *
      * @param request строка содержащая URL
-     * @return если соответствует протоколу запроса HTTP, то возвращает соответствуюший метод. Иначе null
+     * @return method запроса
      */
     public static String getMethod(final String request) {
         if (patternMETHOD.matcher(request).matches()) {
@@ -103,11 +102,12 @@ public class HttpParser {
 
     /**
      * Метод, обрабатываюший полученную url и возвращаюший путь к ресурсу.
+     *
      * @param url строка URL
      * @return путь к файлу
      */
     public static String getPath(String url) {
-        String path = ServerPath.PATH;
+        String path = ServerPath.PAGE_PATH;
         int i = url.indexOf("?");
         if (i > 0) url = url.substring(0, i);
         i = url.indexOf("#");
@@ -126,6 +126,7 @@ public class HttpParser {
 
     /**
      * Метод, получающий пользовательские данные из запроса.
+     *
      * @param request параметр запроса.
      * @return входные параметры
      */

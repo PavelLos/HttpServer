@@ -4,14 +4,37 @@ import com.pavel.Main;
 import com.pavel.constants.ServerPath;
 
 /**
- * Created by pasha on 21.03.2017.
+ * Класс, отвечающий за получение данных, находящихся в кофигурационном файле.
  */
 public class Configurations {
+    /**
+     * Путь к каталогу страниц.
+     */
     private String pagesPath;
+    /**
+     * Путь к каталогу jar-файлов.
+     */
+    private String jarPath;
+    /**
+     * Путь к кофигурационному каталогу
+     */
     private String configDirectoryPath;
-    private String port;
+    /**
+     * Порт
+     */
+    private int port;
+    /**
+     * Путь к конфигурационному log-файлу
+     */
     private String logPath;
+    /**
+     * Путь к к конфигурационнму файлу
+     */
     private String configPath;
+    /**
+     * Путь к к серверу
+     */
+    private String pathToServer;
 
     private static Configurations ourInstance = new Configurations();
 
@@ -19,25 +42,37 @@ public class Configurations {
         return ourInstance;
     }
 
+    /**
+     * Создание экземпляра класса
+     *
+     * @see Configurations
+     */
     private Configurations() {
         configDirectoryPath = configDirectoryPath();
-        System.out.println(configDirectoryPath);
         logPath = configDirectoryPath + ServerPath.CONFIG_PATH_LOG;
-        System.out.println(logPath);
         configPath = configDirectoryPath + ServerPath.CONFIG_PATH;
         pagesPath = ConfigReader.getPagesDirectory(configPath);
-        port = ConfigReader.getPORT(configPath);
+        jarPath = ConfigReader.getJarDirectory(configPath);
+        port = Integer.parseInt(ConfigReader.getPORT(configPath));
     }
 
     public String getPagesPath() {
         return pagesPath;
     }
 
+    public String getJarPath() {
+        return jarPath;
+    }
+
     public String getConfigDirectoryPath() {
         return configDirectoryPath;
     }
 
-    public String getPort() {
+    public String getPathToServer() {
+        return pathToServer;
+    }
+
+    public int getPort() {
         return port;
     }
 
@@ -49,12 +84,19 @@ public class Configurations {
         return configPath;
     }
 
+    /**
+     * Нахождение пути к кофигурационой директории
+     *
+     * @return путь кофигурационной директории
+     */
     private String configDirectoryPath() {
         String pathJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toString();
         if (pathJar.contains("/http-server-socket-1.0-SNAPSHOT.jar")) {
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             pathJar = pathJar.substring(pathJar.indexOf("/") + 1, pathJar.indexOf("http-server-socket-1.0-SNAPSHOT.jar"));
+            pathToServer = pathJar;
             return pathJar + ServerPath.CONFIG_PATH;
+        } else if (pathJar.contains("HttpServer")) {
+            pathToServer = pathJar.substring(pathJar.indexOf("/") + 1, pathJar.indexOf("target"));
         }
         return ServerPath.CONFIG_DIRECTORY;
     }

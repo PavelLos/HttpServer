@@ -9,15 +9,43 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-
+/**
+ * Класс для работы сессии клиента
+ */
 public class ClientSession extends Thread {
 
+    /**
+     * Клиент сокет
+     *
+     * @see Socket#Socket()
+     */
     private Socket clientSocket;
+    /**
+     * Входящий поток
+     *
+     * @see InputStream#InputStream()
+     */
     private InputStream input;
+    /**
+     * Выходящий поток
+     *
+     * @see OutputStream#OutputStream()
+     */
     private OutputStream output;
+    /**
+     * @see HttpServer#HttpServer()
+     */
     private HttpServer httpServer;
+    /**
+     * @see Logger#getLogger(Class)
+     */
     private static Logger log = Logger.getLogger(ClientSession.class);
 
+    /**
+     * Создания объекта для обработки работы клиента
+     *
+     * @param clientSocket - клиентский сокет
+     */
     public ClientSession(Socket clientSocket) {
         this.clientSocket = clientSocket;
         try {
@@ -28,6 +56,9 @@ public class ClientSession extends Thread {
         }
     }
 
+    /**
+     * @see Thread#start()
+     */
     public void run() {
         try {
             if (input != null && output != null) {

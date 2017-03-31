@@ -53,6 +53,7 @@ public class RequestHandler {
 
     /**
      * Метод, читающий входящий запрос.
+     *
      * @param input, содержащий поток байт входного запроса.
      */
     public void readRequest(final InputStream input) {
@@ -67,6 +68,7 @@ public class RequestHandler {
 
     /**
      * Метод, читающий входящий запрос.
+     *
      * @param input, содержащий поток байт входного запроса.
      */
     private void getInputRequest(final InputStream input) {
@@ -90,6 +92,7 @@ public class RequestHandler {
 
     /**
      * Метод, получающий URI из запроса клиента
+     *
      * @return url запроса
      */
     private String getRequestURI() {
@@ -104,11 +107,11 @@ public class RequestHandler {
 
     /**
      * Метод, формирующий headers из запроса клиента.
-     * @param input
+     *
+     * @param input - входящий массив строк запроса
      * @return список, содержащий header и его значение.
-     * @throws IOException
      */
-    public Map<String, String> getRequestHeaders(List<String> input) throws IOException {
+    public Map<String, String> getRequestHeaders(List<String> input) {
         for (String request : input) {
             if (HttpParser.getSplitRequest(request) != null) {
                 httpInfo.putAll(HttpParser.getSplitRequest(request));
@@ -119,6 +122,7 @@ public class RequestHandler {
 
     /**
      * Метод, получающий тип Http запроса
+     *
      * @return метод http запроса
      */
     private String getRequestMethod() {
@@ -136,6 +140,7 @@ public class RequestHandler {
 
     /**
      * Метод, формирующий все параметры из запрсо клиента
+     *
      * @return requestParameters - пользовательские данные
      */
     private List<String> getRequestParameters() {
@@ -148,6 +153,7 @@ public class RequestHandler {
 
     /**
      * Метод, возвращающий параметры запроса в виде строки.
+     *
      * @return parameters - пользовательские данные в виде строки
      */
     public String getRequestParametersToString() {
@@ -173,6 +179,7 @@ public class RequestHandler {
 
     /**
      * Метод, проверяющий корректность входящего запроса и возвращающий true или false
+     *
      * @return false - если входные данные неверны, и true - если не верны.
      */
     public boolean isCorrectRequest() {

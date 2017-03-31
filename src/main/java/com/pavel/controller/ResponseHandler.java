@@ -5,7 +5,10 @@ import com.pavel.constants.ServerPath;
 import com.pavel.view.ServerWindow;
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,11 +24,11 @@ public class ResponseHandler {
 
     /**
      * Метод, формирующий ответ GET запроса
+     *
      * @param url - запрашиваемый ресурс
      * @return сформированный ответ
-     * @throws IOException
      */
-    public byte[] createGetResponse(String url) throws IOException {
+    public byte[] createGetResponse(String url) {
         String path = HttpParser.getPath(url);
         byte[] document;
         byte[] headers;
@@ -47,17 +50,19 @@ public class ResponseHandler {
 
     /**
      * Метод, формирующий ответ POST запроса
-     * @param url - запрашиваемый ресурс
-     * @return сформированный ответ
-     * @throws IOException
+     *
+     * @param url          - запрашиваемый ресурс
+     * @param documentText - содержание документа
+     * @return массив байт для ответа на запрос клиента
      */
-    public byte[] createPostResponse(String url, String documentText) throws IOException {
+    public byte[] createPostResponse(String url, String documentText) {
         String path = HttpParser.getPath(url);
         byte[] document;
         byte[] headers;
         if (checkPath(path)) {
             log.info("Request success: " + HttpStatus.STATUS_200);
-            document = createDocument(path, documentText);
+            //document = createDocument(path, documentText);
+            document = StartJarFile.getInstance().getDocument(path, documentText);
             headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
                     document.length,
                     getContentType(path));
@@ -73,11 +78,11 @@ public class ResponseHandler {
 
     /**
      * Метод, формирующий ответ HEAD запроса
+     *
      * @param url - запрашиваемый ресурс
      * @return сформированный ответ
-     * @throws IOException
      */
-    public byte[] createHeadResponse(String url) throws IOException {
+    public byte[] createHeadResponse(String url) {
         String path = HttpParser.getPath(url);
         byte[] document;
         byte[] headers;
@@ -100,8 +105,9 @@ public class ResponseHandler {
 
     /**
      * Метод, формирующий заголовки для ответа сервера
-     * @param status - статус ответа
-     * @param length - длина отправляемого ресурса
+     *
+     * @param status      - статус ответа
+     * @param length      - длина отправляемого ресурса
      * @param contentType - тип отправляемого ресурса
      * @return список сформированных заголовков
      */
@@ -121,6 +127,7 @@ public class ResponseHandler {
 
     /**
      * Формирование содержания документа для ответа
+     *
      * @param path - путь к объекту
      * @return содержание для ответа
      */
@@ -138,39 +145,8 @@ public class ResponseHandler {
     }
 
     /**
-     * Формирование содержания документа для ответа
-     * @param path - путь к документу
-     * @param documentText - содержание для ответа
-     * @return содержание для ответа
-     */
-    private byte[] createDocument(String path, String documentText) {
-        StringBuilder document = new StringBuilder();
-        byte[] fileContent = null;
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        String fileString;
-        while (true) {
-            try {
-                fileString = reader.readLine();
-                if (fileString == null || fileString.isEmpty())
-                    break;
-                document.append(fileString);
-                if (fileString.equals("<body>"))
-                    document.append(documentText);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        fileContent = document.toString().getBytes();
-        return fileContent;
-    }
-
-    /**
      * Формирование даты для заголовка ответа сервера
+     *
      * @return дата
      */
     private String createDate() {
@@ -188,9 +164,10 @@ public class ResponseHandler {
 
     /**
      * Формирование массива байт для ответа
-     * @param headers - заголовки ответа сервера
+     *
+     * @param headers  - заголовки ответа сервера
      * @param document - содержание документа для ответа
-     * @return
+     * @return response - массив байт для отправки клиенту
      */
     private byte[] getResponseByte(byte[] headers, byte[] document) {
         int hLength = headers.length;
@@ -203,8 +180,9 @@ public class ResponseHandler {
 
     /**
      * Проверка наличия документа по указываемому пути
-     * @param path
-     * @return
+     *
+     * @param path - путь к файлу
+     * @return true - если искомый документ существует, иначе false
      */
     private boolean checkPath(String path) {
         try (InputStream inputStream = new FileInputStream(path)) {
@@ -220,6 +198,7 @@ public class ResponseHandler {
 
     /**
      * Формирование заголовка Content-Type для ответа сервера
+     *
      * @param path - путь к запрашиваемому объекту
      * @return значение заголовка Content-Type
      */

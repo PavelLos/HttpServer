@@ -4,23 +4,51 @@ package com.pavel.server;
 import com.pavel.constants.HttpMethod;
 import com.pavel.controller.RequestHandler;
 import com.pavel.controller.ResponseHandler;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Класс, отвечающий за работу сервера: обработка запросов и формирование ответа
+ */
 public class HttpServer {
+    /**
+     * @see Logger#getLogger
+     */
+    private static Logger log = Logger.getLogger(HttpServer.class);
+    /**
+     * @see RequestHandler
+     */
     private ResponseHandler responseHandler;
+    /**
+     * @see RequestHandler
+     */
     private RequestHandler requestHandler;
 
+    /**
+     * Массив байт для отправки ответа
+     */
     private byte[] response;
+    /**
+     * true, если ответ корректный и false, если неверен
+     */
     private boolean correctResponse;
 
+    /**
+     * Создание экземпляра
+     */
     public HttpServer() {
         correctResponse = false;
     }
 
-    public void httpMethod(InputStream input) throws IOException {
+    /**
+     * Метод, отвечающий за создание ответа сервера
+     *
+     * @param input - входной поток данных
+     */
+    public void httpMethod(InputStream input) {
         requestHandler = new RequestHandler(input);
         if (requestHandler.isCorrectRequest()) {
             responseHandler = new ResponseHandler();
@@ -37,31 +65,47 @@ public class HttpServer {
         }
     }
 
-    private void doGet() throws IOException {
+    /**
+     * Метод, формирующий ответ get запроса.
+     */
+    private void doGet() {
         response = responseHandler.createGetResponse(requestHandler.getUrl());
         correctResponse = true;
     }
 
-
-    private void doPost() throws IOException {
+    /**
+     * Метод, формирующий ответ post запроса.
+     */
+    private void doPost() {
         response = responseHandler.createPostResponse(requestHandler.getUrl(),
                 requestHandler.getRequestParametersToString());
         correctResponse = true;
 
     }
 
-
-    private void doHead() throws IOException {
+    /**
+     * Метод, формирующий ответ head запроса.
+     */
+    private void doHead() {
         response = responseHandler.createHeadResponse(requestHandler.getUrl());
         correctResponse = true;
 
     }
 
-    public void sendResponse(OutputStream output) throws IOException {
+    /**
+     * Метод, отсылающий ответ сервера клиенту.
+     *
+     * @param output - поток для отправки данных
+     */
+    public void sendResponse(OutputStream output) {
         if (correctResponse) {
-            output.write(response);
-            output.flush();
-            correctResponse = false;
+            try {
+                output.write(response);
+                output.flush();
+                correctResponse = false;
+            } catch (IOException e) {
+                log.error("Response не отправлен");
+            }
         }
     }
 }
