@@ -14,24 +14,20 @@ import java.util.regex.Pattern;
 public class HttpParser {
     /**
      * константа содержащая строку разделитель для запросов
-     *
      */
     private static final String REQUEST_HEADER_SPLIT = ":\\s";
     /**
      * константа содержащая регулярное выражение для запроса серверу от клиента
-     *
      */
     private static final String REQUEST_HEADER = "^[A-Za-z-]+:\\s.*$";
     /**
      * константа содержащая регулярное выражение для запроса URL
-     *
      */
-    private static final String REQUEST_URL = "^(GET|POST|HEAD).+";
+    private static final String REQUEST_URL = "^(GET|POST|HEAD|OPTIONS|PUT|PATCH|DELETE|TRACE|CONNECT).+";
     /**
      * константа содержащая регулярное выражение для выбора метода для запроса
-     *
      */
-    private static final String REQUEST_METHOD = "(GET|POST|HEAD).+";
+    private static final String REQUEST_METHOD = "(GET|POST|HEAD|OPTIONS|PUT|PATCH|DELETE|TRACE|CONNECT).+";
 
     /**
      * шаблон для ругулярного выражения
@@ -82,7 +78,7 @@ public class HttpParser {
      */
     public static String getUrl(final String firstStrFromRequest) {
         if (patternURL.matcher(firstStrFromRequest).matches()) {
-            return firstStrFromRequest.substring(firstStrFromRequest.indexOf(" ") + 1, firstStrFromRequest.indexOf(" ", 5));
+            return firstStrFromRequest.substring(firstStrFromRequest.indexOf(" ") + 1, firstStrFromRequest.lastIndexOf(" "));
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package com.pavel.controller;
 
+import com.pavel.configurations.ConfigReader;
 import com.pavel.configurations.Configurations;
 import com.pavel.constants.ServerPath;
 import com.pavel.view.ServerWindow;
@@ -68,7 +69,8 @@ public class StartJarFile {
      * @return processBuilder - процесс, готовый для запуска
      */
     private ProcessBuilder createProcess(String path, String documentText) {
-        String[] command = {"java", "-jar", checkFile(path), path, documentText};
+        String[] command = {"java", "-jar", ConfigReader.getJarNameByPage(path.substring(path.lastIndexOf("/") + 1)),
+                path + ".html", documentText};
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         processBuilder.redirectErrorStream(true);
         processBuilder.directory(new File(Configurations.getInstance().getPathToServer() + ServerPath.JAR_PATH));
@@ -90,8 +92,8 @@ public class StartJarFile {
                     document.append(line);
             }
         } catch (IOException e) {
-            log.error("Ошибкачтения документа");
-            ServerWindow.getInstance().printInfo("Ошибкачтения документа");
+            log.error("Ошибка чтения документа");
+            ServerWindow.getInstance().printInfo("Ошибка чтения документа");
         }
         return document.toString().getBytes();
     }
@@ -106,19 +108,5 @@ public class StartJarFile {
     public byte[] getDocument(String path, String documentText) {
         startProcess(Configurations.getInstance().getPathToServer() + path, documentText);
         return readCreatedFile();
-    }
-
-    /**
-     * Проверка наличия java программы для соответствующего запроса
-     *
-     * @param path - путь к запрашиваемому документу
-     * @return jarName - необходимая программа
-     */
-    private String checkFile(String path) {
-        String jarName = "";
-        if (path.contains("post_show.html")) {
-            jarName = "post_example-1.0-SNAPSHOT.jar";
-        }
-        return jarName;
     }
 }

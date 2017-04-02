@@ -32,6 +32,7 @@ public class PostExample {
                 }
             }
         } catch (FileNotFoundException e) {
+
         }
         sendDocument(document);
     }

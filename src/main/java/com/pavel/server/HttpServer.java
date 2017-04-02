@@ -56,14 +56,18 @@ public class HttpServer {
             String method = requestHandler.getMethod();
             if (method.equals(HttpMethod.GET.getMethod())) {
                 doGet();
-            }
-            if (method.equals(HttpMethod.POST.getMethod())) {
+            } else if (method.equals(HttpMethod.POST.getMethod())) {
                 doPost();
-            }
-            if (method.equals(HttpMethod.HEAD.getMethod())) {
+            } else if (method.equals(HttpMethod.HEAD.getMethod())) {
                 doHead();
-            }
+            } else doNotImplemented();
+
         }
+    }
+
+    private void doNotImplemented() {
+        response = responseHandler.notImplemented(requestHandler.getUrl());
+        correctResponse = true;
     }
 
     /**

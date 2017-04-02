@@ -129,14 +129,8 @@ public class RequestHandler {
     private String getRequestMethod() {
         String method = null;
         method = HttpParser.getMethod(inputRequest.get(0));
-        if (method.equals(HttpMethod.POST.getMethod()) ||
-                method.equals(HttpMethod.GET.getMethod()) ||
-                method.equals(HttpMethod.HEAD.getMethod())) {
-            log.info("Client request method: " + method);
-            return method;
-        }
-        log.error("Client request method is wrong");
-        return null;
+        log.info("Client request method: " + method);
+        return method;
     }
 
     /**
@@ -145,8 +139,6 @@ public class RequestHandler {
      * @return requestParameters - пользовательские данные
      */
     private List<String> getRequestParameters() {
-        if (method.equals(HttpMethod.GET.getMethod()))
-            requestParameters = HttpParser.getValues(url);
         if (method.equals(HttpMethod.POST.getMethod()))
             requestParameters = HttpParser.getValues(inputRequest.get(inputRequest.size() - 1));
         return requestParameters;

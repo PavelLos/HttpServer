@@ -14,6 +14,7 @@ import java.io.IOException;
  * Класс, читающий кофигурационный файл
  */
 public class ConfigReader {
+    //private static String configString = getConfigString(Configurations.getInstance().getConfigPath());
 
     public ConfigReader() {
 
@@ -71,6 +72,42 @@ public class ConfigReader {
         }
         JSONObject jsonObj = (JSONObject) obj;
         return jsonObj.get("JAR_PATH").toString();
+    }
+
+    /**
+     * Метод, возвращающий название jar - файла, по запрашиваемому документу.
+     * @param namePage имя запрашиваемого документа
+     * @return название Jar файла
+     */
+    public static String getJarNameByPage(String namePage) {
+        JSONParser parser = new JSONParser();
+        Object obj = null;
+        try {
+            obj = parser.parse(getConfigString(Configurations.getInstance().getConfigPath()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonObj = (JSONObject) obj;
+        return jsonObj.get(namePage).toString();
+    }
+
+    /**
+     * Проверка наличия jar - файла для
+     * @param page
+     * @return
+     */
+    public static boolean checkPage(String page){
+        JSONParser parser = new JSONParser();
+        Object obj = null;
+        try {
+            obj = parser.parse(getConfigString(Configurations.getInstance().getConfigPath()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonObj = (JSONObject) obj;
+        if (jsonObj.get(page) !=null)
+            return true;
+        return false;
     }
 
     /**

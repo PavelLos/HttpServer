@@ -1,5 +1,6 @@
 package com.pavel.controller;
 
+import com.pavel.configurations.ConfigReader;
 import com.pavel.constants.HttpStatus;
 import com.pavel.constants.ServerPath;
 import com.pavel.view.ServerWindow;
@@ -32,7 +33,7 @@ public class ResponseHandler {
         String path = HttpParser.getPath(url);
         byte[] document;
         byte[] headers;
-        if (checkPath(path)) {
+        if (checkPath(path) && path.contains(".html")) {
             log.info("Request success: " + HttpStatus.STATUS_200);
             ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
             document = createDocument(path);
@@ -40,12 +41,7 @@ public class ResponseHandler {
                     document.length,
                     getContentType(path));
         } else {
-            log.info("Request Error: " + HttpStatus.STATUS_404);
-            ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_404);
-            document = createDocument(ServerPath.NOT_FOUND);
-            headers = createHeaders(HttpStatus.STATUS_404.getConstant(),
-                    document.length,
-                    getContentType(path));
+            return notFound(url);
         }
         return getResponseByte(headers, document);
     }
@@ -62,19 +58,18 @@ public class ResponseHandler {
         byte[] document;
         byte[] headers;
         if (checkPath(path)) {
-            log.info("Request success: " + HttpStatus.STATUS_200);
-            ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
-            document = StartJarFile.getInstance().getDocument(path, documentText);
-            headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
-                    document.length,
-                    getContentType(path));
+            if (checkJarPath(path)) {
+                log.info("Request success: " + HttpStatus.STATUS_200);
+                ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
+                document = StartJarFile.getInstance().getDocument(path, documentText);
+                headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
+                        document.length,
+                        getContentType(path));
+            } else {
+                return notAllowed(url);
+            }
         } else {
-            log.info("Request Error: " + HttpStatus.STATUS_404);
-            ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_404);
-            document = createDocument(ServerPath.NOT_FOUND);
-            headers = createHeaders(HttpStatus.STATUS_404.getConstant(),
-                    document.length,
-                    getContentType(path));
+            return notFound(url);
         }
         return getResponseByte(headers, document);
     }
@@ -97,15 +92,61 @@ public class ResponseHandler {
             log.info("Request success: " + HttpStatus.STATUS_200);
             ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
         } else {
-            document = createDocument(ServerPath.NOT_FOUND);
-            headers = createHeaders(HttpStatus.STATUS_404.getConstant(),
-                    document.length,
-                    getContentType(path));
-            log.info("Request Error: " + HttpStatus.STATUS_404);
-            ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_404);
+            return notFound(url);
         }
-
         return headers;
+    }
+
+    private byte[] badRequest(String url) {
+        String path = HttpParser.getPath(url);
+        byte[] document;
+        byte[] headers;
+        log.info("Request Error: " + HttpStatus.STATUS_400);
+        ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_400);
+        document = createDocument(ServerPath.BAD_REQUEST);
+        headers = createHeaders(HttpStatus.STATUS_400.getConstant(),
+                document.length,
+                getContentType(path));
+        return getResponseByte(headers, document);
+    }
+
+    public byte[] notImplemented(String url) {
+        String path = HttpParser.getPath(url);
+        byte[] document;
+        byte[] headers;
+        log.info("Request Error: " + HttpStatus.STATUS_501);
+        ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_501);
+        document = createDocument(ServerPath.NOT_IMPLEMENTED);
+        headers = createHeaders(HttpStatus.STATUS_501.getConstant(),
+                document.length,
+                getContentType(path));
+        return getResponseByte(headers, document);
+    }
+
+    public byte[] notAllowed(String url) {
+        String path = HttpParser.getPath(url);
+        byte[] document;
+        byte[] headers;
+        log.info("Request Error: " + HttpStatus.STATUS_405);
+        ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_405);
+        document = createDocument(ServerPath.NOT_ALLOWED_METHOD);
+        headers = createHeaders(HttpStatus.STATUS_405.getConstant(),
+                document.length,
+                getContentType(path));
+        return getResponseByte(headers, document);
+    }
+
+    private byte[] notFound(String url) {
+        String path = HttpParser.getPath(url);
+        byte[] document;
+        byte[] headers;
+        document = createDocument(ServerPath.NOT_FOUND);
+        headers = createHeaders(HttpStatus.STATUS_404.getConstant(),
+                document.length,
+                getContentType(path));
+        log.info("Request Error: " + HttpStatus.STATUS_404);
+        ServerWindow.getInstance().printInfo("Request Error: " + HttpStatus.STATUS_404);
+        return getResponseByte(headers, document);
     }
 
     /**
@@ -191,6 +232,8 @@ public class ResponseHandler {
      * @return true - если искомый документ существует, иначе false
      */
     private boolean checkPath(String path) {
+        if (ConfigReader.checkPage(path.substring(path.lastIndexOf("/") + 1)))
+            return true;
         try (InputStream inputStream = new FileInputStream(path)) {
             if (inputStream != null)
                 return true;
@@ -200,6 +243,14 @@ public class ResponseHandler {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private boolean checkJarPath(String path) {
+        String page = path.substring(path.lastIndexOf("/") + 1);
+        if (ConfigReader.checkPage(page)) {
+            return true;
+        }
+        return false;
     }
 
     /**
