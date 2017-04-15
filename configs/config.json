@@ -3,5 +3,7 @@
   "HOST": "localhost",
   "PAGES_PATH": "pages",
   "JAR_PATH": "jar-files",
-  "post_show": "post_example-1.0-SNAPSHOT.jar"
+  "post_show": "post_example-1.0-SNAPSHOT.jar",
+  "post_example": "post_example.html",
+  "web": "web.html"
 }

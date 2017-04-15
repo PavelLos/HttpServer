@@ -69,8 +69,13 @@ public class StartJarFile {
      * @return processBuilder - процесс, готовый для запуска
      */
     private ProcessBuilder createProcess(String path, String documentText) {
-        String[] command = {"java", "-jar", ConfigReader.getJarNameByPage(path.substring(path.lastIndexOf("/") + 1)),
-                path + ".html", documentText};
+        String page = path.substring(path.lastIndexOf("/") + 1);
+        if (page.contains("."))
+            page = page.substring(0, page.indexOf("."));
+        else
+            path = path + ".html";
+        String[] command = {"java", "-jar", ConfigReader.getJarNameByPage(page),
+                path, documentText};
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         processBuilder.redirectErrorStream(true);
         processBuilder.directory(new File(Configurations.getInstance().getPathToServer() + ServerPath.JAR_PATH));

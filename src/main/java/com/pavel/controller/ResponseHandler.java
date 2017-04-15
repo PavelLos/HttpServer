@@ -31,15 +31,20 @@ public class ResponseHandler {
      */
     public byte[] createGetResponse(String url) {
         String path = HttpParser.getPath(url);
+        path = checkConfigPage(path);
         byte[] document;
         byte[] headers;
-        if (checkPath(path) && path.contains(".html")) {
-            log.info("Request success: " + HttpStatus.STATUS_200);
-            ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
-            document = createDocument(path);
-            headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
-                    document.length,
-                    getContentType(path));
+        if (checkPath(path)) {
+            if (!checkJarPath(path)) {
+                log.info("Request success: " + HttpStatus.STATUS_200);
+                ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
+                document = createDocument(path);
+                headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
+                        document.length,
+                        getContentType(path));
+            } else {
+                return notAllowed(url);
+            }
         } else {
             return notFound(url);
         }
@@ -55,6 +60,7 @@ public class ResponseHandler {
      */
     public byte[] createPostResponse(String url, String documentText) {
         String path = HttpParser.getPath(url);
+        path = checkConfigPage(path);
         byte[] document;
         byte[] headers;
         if (checkPath(path)) {
@@ -82,15 +88,20 @@ public class ResponseHandler {
      */
     public byte[] createHeadResponse(String url) {
         String path = HttpParser.getPath(url);
+        path = checkConfigPage(path);
         byte[] document;
         byte[] headers;
         if (checkPath(path)) {
-            document = createDocument(path);
-            headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
-                    document.length,
-                    getContentType(path));
-            log.info("Request success: " + HttpStatus.STATUS_200);
-            ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
+            if (!checkJarPath(path)) {
+                document = createDocument(path);
+                headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
+                        document.length,
+                        getContentType(path));
+                log.info("Request success: " + HttpStatus.STATUS_200);
+                ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
+            } else {
+                return notAllowed(url);
+            }
         } else {
             return notFound(url);
         }
@@ -196,6 +207,7 @@ public class ResponseHandler {
      *
      * @return дата
      */
+
     private String createDate() {
         SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -245,10 +257,22 @@ public class ResponseHandler {
         }
     }
 
+    private String checkConfigPage(String path) {
+        String pagePath = path.substring(0, path.lastIndexOf("/") + 1);
+        if (ConfigReader.checkPage(path.substring(path.lastIndexOf("/") + 1))) {
+            if (!ConfigReader.getJarNameByPage(path.substring(path.lastIndexOf("/") + 1)).contains(".jar"))
+                return pagePath + ConfigReader.getJarNameByPage(path.substring(path.lastIndexOf("/") + 1));
+        }
+        return path;
+    }
+
     private boolean checkJarPath(String path) {
         String page = path.substring(path.lastIndexOf("/") + 1);
+        if (page.contains("."))
+            page = page.substring(0, page.indexOf("."));
         if (ConfigReader.checkPage(page)) {
-            return true;
+            if (ConfigReader.getJarNameByPage(page).contains(".jar"))
+                return true;
         }
         return false;
     }
