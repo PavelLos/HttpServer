@@ -76,6 +76,8 @@
                 <version>2.9</version>
                 <configuration>
                     <overview>${basedir}/overview.html</overview>
+                    <encoding>Windows-1251</encoding>
+                    <show>private</show>
                 </configuration>
             </plugin>
 
