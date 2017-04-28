@@ -11,7 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * РљР»Р°СЃСЃ, С‡РёС‚Р°СЋС‰РёР№ РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅС‹Р№ С„Р°Р№Р»
+ * Класс, читающий кофигурационный файл
  */
 public class ConfigReader {
     //private static String configString = getConfigString(Configurations.getInstance().getConfigPath());
@@ -21,10 +21,10 @@ public class ConfigReader {
     }
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ РїРѕСЂС‚ РёР· РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°
+     * Метод, получающий порт из кофигурационного файла
      *
-     * @param configPath - РїСѓС‚СЊ Рє РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРјСѓ С„Р°Р№Р»Сѓ
-     * @return РїРѕСЂС‚
+     * @param configPath - путь к кофигурационному файлу
+     * @return порт
      */
     public static String getPORT(String configPath) {
         JSONParser parser = new JSONParser();
@@ -39,10 +39,10 @@ public class ConfigReader {
     }
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ РґРёСЂРµРєС‚РѕСЂРёСЋ, СЃРѕРґРµСЂР¶Р°С‰СѓСЋ СЃС‚СЂРЅРёС†С‹ РёР· РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°
+     * Метод, получающий директорию, содержащую стрницы из кофигурационного файла
      *
-     * @param configPath - РїСѓС‚СЊ Рє РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРјСѓ С„Р°Р№Р»Сѓ
-     * @return РїСѓС‚СЊ Рє РґРёСЂРµРєС‚РѕСЂРёРё
+     * @param configPath - путь к кофигурационному файлу
+     * @return путь к директории
      */
     public static String getPagesDirectory(String configPath) {
         JSONParser parser = new JSONParser();
@@ -57,10 +57,10 @@ public class ConfigReader {
     }
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ РґРёСЂРµРєС‚РѕСЂРёСЋ, СЃРѕРґРµСЂР¶Р°С‰СѓСЋ jar-С„Р°Р№Р»С‹ РёР· РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°
+     * Метод, получающий директорию, содержащую jar-файлы из кофигурационного файла
      *
-     * @param configPath - РїСѓС‚СЊ Рє РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРјСѓ С„Р°Р№Р»Сѓ
-     * @return РїСѓС‚СЊ Рє РґРёСЂРµРєС‚РѕСЂРёРё
+     * @param configPath - путь к кофигурационному файлу
+     * @return путь к директории
      */
     public static String getJarDirectory(String configPath) {
         JSONParser parser = new JSONParser();
@@ -75,9 +75,9 @@ public class ConfigReader {
     }
 
     /**
-     * РњРµС‚РѕРґ, РІРѕР·РІСЂР°С‰Р°СЋС‰РёР№ РЅР°Р·РІР°РЅРёРµ jar - С„Р°Р№Р»Р°, РїРѕ Р·Р°РїСЂР°С€РёРІР°РµРјРѕРјСѓ РґРѕРєСѓРјРµРЅС‚Сѓ.
-     * @param namePage РёРјСЏ Р·Р°РїСЂР°С€РёРІР°РµРјРѕРіРѕ РґРѕРєСѓРјРµРЅС‚Р°
-     * @return РЅР°Р·РІР°РЅРёРµ Jar С„Р°Р№Р»Р°
+     * Метод, возвращающий название jar - файла, по запрашиваемому документу.
+     * @param namePage имя запрашиваемого документа
+     * @return название Jar файла
      */
     public static String getJarNameByPage(String namePage) {
         JSONParser parser = new JSONParser();
@@ -92,7 +92,7 @@ public class ConfigReader {
     }
 
     /**
-     * РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ jar - С„Р°Р№Р»Р° РґР»СЏ
+     * Проверка наличия jar - файла для
      * @param page
      * @return
      */
@@ -111,10 +111,10 @@ public class ConfigReader {
     }
 
     /**
-     * РњРµС‚РѕРґ, С‡РёС‚Р°СЋС‰РёР№ РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅС‹Р№ С„Р°Р№Р»
+     * Метод, читающий кофигурационный файл
      *
-     * @param configPath - РїСѓС‚СЊ Рє РєРѕС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРјСѓ С„Р°Р№Р»Сѓ
-     * @return СЃРѕРґРµСЂР¶Р°РЅРёРµ С„Р°Р№Р»Р°
+     * @param configPath - путь к кофигурационному файлу
+     * @return содержание файла
      */
     private static String getConfigString(String configPath) {
         StringBuilder string = new StringBuilder();

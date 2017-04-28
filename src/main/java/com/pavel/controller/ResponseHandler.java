@@ -24,10 +24,10 @@ public class ResponseHandler {
 
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ РѕС‚РІРµС‚ GET Р·Р°РїСЂРѕСЃР°
+     * Метод, формирующий ответ GET запроса
      *
-     * @param url - Р·Р°РїСЂР°С€РёРІР°РµРјС‹Р№ СЂРµСЃСѓСЂСЃ
-     * @return СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅС‹Р№ РѕС‚РІРµС‚
+     * @param url - запрашиваемый ресурс
+     * @return сформированный ответ
      */
     public byte[] createGetResponse(String url) {
         String path = HttpParser.getPath(url);
@@ -52,11 +52,11 @@ public class ResponseHandler {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ РѕС‚РІРµС‚ POST Р·Р°РїСЂРѕСЃР°
+     * Метод, формирующий ответ POST запроса
      *
-     * @param url          - Р·Р°РїСЂР°С€РёРІР°РµРјС‹Р№ СЂРµСЃСѓСЂСЃ
-     * @param documentText - СЃРѕРґРµСЂР¶Р°РЅРёРµ РґРѕРєСѓРјРµРЅС‚Р°
-     * @return РјР°СЃСЃРёРІ Р±Р°Р№С‚ РґР»СЏ РѕС‚РІРµС‚Р° РЅР° Р·Р°РїСЂРѕСЃ РєР»РёРµРЅС‚Р°
+     * @param url          - запрашиваемый ресурс
+     * @param documentText - содержание документа
+     * @return массив байт для ответа на запрос клиента
      */
     public byte[] createPostResponse(String url, String documentText) {
         String path = HttpParser.getPath(url);
@@ -67,10 +67,20 @@ public class ResponseHandler {
             if (checkJarPath(path)) {
                 log.info("Request success: " + HttpStatus.STATUS_200);
                 ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
-                document = StartJarFile.getInstance().getDocument(path, documentText);
-                headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
-                        document.length,
-                        getContentType(path));
+                String doc =  StartJarFile.getInstance().getDocument(path, documentText);
+                if(!doc.contains("Exception")){
+                    document = doc.getBytes();
+                    headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
+                            document.length,
+                            getContentType(path));
+                }
+                else {
+                    document = doc.getBytes();
+                    headers = createHeaders(HttpStatus.STATUS_500.getConstant(),
+                            document.length,
+                            getContentType(path));
+                }
+
             } else {
                 return notAllowed(url);
             }
@@ -81,10 +91,10 @@ public class ResponseHandler {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ РѕС‚РІРµС‚ HEAD Р·Р°РїСЂРѕСЃР°
+     * Метод, формирующий ответ HEAD запроса
      *
-     * @param url - Р·Р°РїСЂР°С€РёРІР°РµРјС‹Р№ СЂРµСЃСѓСЂСЃ
-     * @return СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅС‹Р№ РѕС‚РІРµС‚
+     * @param url - запрашиваемый ресурс
+     * @return сформированный ответ
      */
     public byte[] createHeadResponse(String url) {
         String path = HttpParser.getPath(url);
@@ -161,12 +171,12 @@ public class ResponseHandler {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ Р·Р°РіРѕР»РѕРІРєРё РґР»СЏ РѕС‚РІРµС‚Р° СЃРµСЂРІРµСЂР°
+     * Метод, формирующий заголовки для ответа сервера
      *
-     * @param status      - СЃС‚Р°С‚СѓСЃ РѕС‚РІРµС‚Р°
-     * @param length      - РґР»РёРЅР° РѕС‚РїСЂР°РІР»СЏРµРјРѕРіРѕ СЂРµСЃСѓСЂСЃР°
-     * @param contentType - С‚РёРї РѕС‚РїСЂР°РІР»СЏРµРјРѕРіРѕ СЂРµСЃСѓСЂСЃР°
-     * @return СЃРїРёСЃРѕРє СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅС‹С… Р·Р°РіРѕР»РѕРІРєРѕРІ
+     * @param status      - статус ответа
+     * @param length      - длина отправляемого ресурса
+     * @param contentType - тип отправляемого ресурса
+     * @return список сформированных заголовков
      */
     private byte[] createHeaders(String status, int length, String contentType) {
         String responseHeader =
@@ -184,10 +194,10 @@ public class ResponseHandler {
     }
 
     /**
-     * Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃРѕРґРµСЂР¶Р°РЅРёСЏ РґРѕРєСѓРјРµРЅС‚Р° РґР»СЏ РѕС‚РІРµС‚Р°
+     * Формирование содержания документа для ответа
      *
-     * @param path - РїСѓС‚СЊ Рє РѕР±СЉРµРєС‚Сѓ
-     * @return СЃРѕРґРµСЂР¶Р°РЅРёРµ РґР»СЏ РѕС‚РІРµС‚Р°
+     * @param path - путь к объекту
+     * @return содержание для ответа
      */
     private byte[] createDocument(String path) {
         InputStream file = null;
@@ -203,9 +213,9 @@ public class ResponseHandler {
     }
 
     /**
-     * Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РґР°С‚С‹ РґР»СЏ Р·Р°РіРѕР»РѕРІРєР° РѕС‚РІРµС‚Р° СЃРµСЂРІРµСЂР°
+     * Формирование даты для заголовка ответа сервера
      *
-     * @return РґР°С‚Р°
+     * @return дата
      */
 
     private String createDate() {
@@ -222,11 +232,11 @@ public class ResponseHandler {
     }
 
     /**
-     * Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РјР°СЃСЃРёРІР° Р±Р°Р№С‚ РґР»СЏ РѕС‚РІРµС‚Р°
+     * Формирование массива байт для ответа
      *
-     * @param headers  - Р·Р°РіРѕР»РѕРІРєРё РѕС‚РІРµС‚Р° СЃРµСЂРІРµСЂР°
-     * @param document - СЃРѕРґРµСЂР¶Р°РЅРёРµ РґРѕРєСѓРјРµРЅС‚Р° РґР»СЏ РѕС‚РІРµС‚Р°
-     * @return response - РјР°СЃСЃРёРІ Р±Р°Р№С‚ РґР»СЏ РѕС‚РїСЂР°РІРєРё РєР»РёРµРЅС‚Сѓ
+     * @param headers  - заголовки ответа сервера
+     * @param document - содержание документа для ответа
+     * @return response - массив байт для отправки клиенту
      */
     private byte[] getResponseByte(byte[] headers, byte[] document) {
         int hLength = headers.length;
@@ -238,10 +248,10 @@ public class ResponseHandler {
     }
 
     /**
-     * РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ РґРѕРєСѓРјРµРЅС‚Р° РїРѕ СѓРєР°Р·С‹РІР°РµРјРѕРјСѓ РїСѓС‚Рё
+     * Проверка наличия документа по указываемому пути
      *
-     * @param path - РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ
-     * @return true - РµСЃР»Рё РёСЃРєРѕРјС‹Р№ РґРѕРєСѓРјРµРЅС‚ СЃСѓС‰РµСЃС‚РІСѓРµС‚, РёРЅР°С‡Рµ false
+     * @param path - путь к файлу
+     * @return true - если искомый документ существует, иначе false
      */
     private boolean checkPath(String path) {
         if (ConfigReader.checkPage(path.substring(path.lastIndexOf("/") + 1)))
@@ -278,10 +288,10 @@ public class ResponseHandler {
     }
 
     /**
-     * Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ Р·Р°РіРѕР»РѕРІРєР° Content-Type РґР»СЏ РѕС‚РІРµС‚Р° СЃРµСЂРІРµСЂР°
+     * Формирование заголовка Content-Type для ответа сервера
      *
-     * @param path - РїСѓС‚СЊ Рє Р·Р°РїСЂР°С€РёРІР°РµРјРѕРјСѓ РѕР±СЉРµРєС‚Сѓ
-     * @return Р·РЅР°С‡РµРЅРёРµ Р·Р°РіРѕР»РѕРІРєР° Content-Type
+     * @param path - путь к запрашиваемому объекту
+     * @return значение заголовка Content-Type
      */
     private String getContentType(String path) {
         int point = path.lastIndexOf(".");

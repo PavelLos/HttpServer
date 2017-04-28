@@ -10,24 +10,24 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 /**
- * РљР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃРµСЃСЃРёРё РєР»РёРµРЅС‚Р°
+ * Класс для работы сессии клиента
  */
 public class ClientSession extends Thread {
 
     /**
-     * РљР»РёРµРЅС‚ СЃРѕРєРµС‚
+     * Клиент сокет
      *
      * @see Socket#Socket()
      */
     private Socket clientSocket;
     /**
-     * Р’С…РѕРґСЏС‰РёР№ РїРѕС‚РѕРє
+     * Входящий поток
      *
      * @see InputStream#InputStream()
      */
     private InputStream input;
     /**
-     * Р’С‹С…РѕРґСЏС‰РёР№ РїРѕС‚РѕРє
+     * Выходящий поток
      *
      * @see OutputStream#OutputStream()
      */
@@ -42,9 +42,9 @@ public class ClientSession extends Thread {
     private static Logger log = Logger.getLogger(ClientSession.class);
 
     /**
-     * РЎРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р° РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё СЂР°Р±РѕС‚С‹ РєР»РёРµРЅС‚Р°
+     * Создания объекта для обработки работы клиента
      *
-     * @param clientSocket - РєР»РёРµРЅС‚СЃРєРёР№ СЃРѕРєРµС‚
+     * @param clientSocket - клиентский сокет
      */
     public ClientSession(Socket clientSocket) {
         this.clientSocket = clientSocket;

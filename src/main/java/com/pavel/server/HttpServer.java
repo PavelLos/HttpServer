@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * РљР»Р°СЃСЃ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° СЂР°Р±РѕС‚Сѓ СЃРµСЂРІРµСЂР°: РѕР±СЂР°Р±РѕС‚РєР° Р·Р°РїСЂРѕСЃРѕРІ Рё С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ РѕС‚РІРµС‚Р°
+ * Класс, отвечающий за работу сервера: обработка запросов и формирование ответа
  */
 public class HttpServer {
     /**
@@ -29,25 +29,25 @@ public class HttpServer {
     private RequestHandler requestHandler;
 
     /**
-     * РњР°СЃСЃРёРІ Р±Р°Р№С‚ РґР»СЏ РѕС‚РїСЂР°РІРєРё РѕС‚РІРµС‚Р°
+     * Массив байт для отправки ответа
      */
     private byte[] response;
     /**
-     * true, РµСЃР»Рё РѕС‚РІРµС‚ РєРѕСЂСЂРµРєС‚РЅС‹Р№ Рё false, РµСЃР»Рё РЅРµРІРµСЂРµРЅ
+     * true, если ответ корректный и false, если неверен
      */
     private boolean correctResponse;
 
     /**
-     * РЎРѕР·РґР°РЅРёРµ СЌРєР·РµРјРїР»СЏСЂР°
+     * Создание экземпляра
      */
     public HttpServer() {
         correctResponse = false;
     }
 
     /**
-     * РњРµС‚РѕРґ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° СЃРѕР·РґР°РЅРёРµ РѕС‚РІРµС‚Р° СЃРµСЂРІРµСЂР°
+     * Метод, отвечающий за создание ответа сервера
      *
-     * @param input - РІС…РѕРґРЅРѕР№ РїРѕС‚РѕРє РґР°РЅРЅС‹С…
+     * @param input - входной поток данных
      */
     public void httpMethod(InputStream input) {
         requestHandler = new RequestHandler(input);
@@ -71,7 +71,7 @@ public class HttpServer {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ РѕС‚РІРµС‚ get Р·Р°РїСЂРѕСЃР°.
+     * Метод, формирующий ответ get запроса.
      */
     private void doGet() {
         response = responseHandler.createGetResponse(requestHandler.getUrl());
@@ -79,7 +79,7 @@ public class HttpServer {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ РѕС‚РІРµС‚ post Р·Р°РїСЂРѕСЃР°.
+     * Метод, формирующий ответ post запроса.
      */
     private void doPost() {
         response = responseHandler.createPostResponse(requestHandler.getUrl(),
@@ -89,7 +89,7 @@ public class HttpServer {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ РѕС‚РІРµС‚ head Р·Р°РїСЂРѕСЃР°.
+     * Метод, формирующий ответ head запроса.
      */
     private void doHead() {
         response = responseHandler.createHeadResponse(requestHandler.getUrl());
@@ -98,9 +98,9 @@ public class HttpServer {
     }
 
     /**
-     * РњРµС‚РѕРґ, РѕС‚СЃС‹Р»Р°СЋС‰РёР№ РѕС‚РІРµС‚ СЃРµСЂРІРµСЂР° РєР»РёРµРЅС‚Сѓ.
+     * Метод, отсылающий ответ сервера клиенту.
      *
-     * @param output - РїРѕС‚РѕРє РґР»СЏ РѕС‚РїСЂР°РІРєРё РґР°РЅРЅС‹С…
+     * @param output - поток для отправки данных
      */
     public void sendResponse(OutputStream output) {
         if (correctResponse) {
@@ -109,8 +109,8 @@ public class HttpServer {
                 output.flush();
                 correctResponse = false;
             } catch (IOException e) {
-                log.error("Response РЅРµ РѕС‚РїСЂР°РІР»РµРЅ");
-                ServerWindow.getInstance().printInfo("Response РЅРµ РѕС‚РїСЂР°РІР»РµРЅ");
+                log.error("Response не отправлен");
+                ServerWindow.getInstance().printInfo("Response не отправлен");
             }
         }
     }

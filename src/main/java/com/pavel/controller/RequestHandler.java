@@ -14,27 +14,27 @@ import java.util.Map;
 
 public class RequestHandler {
     /**
-     * List, СЃРѕРґРµСЂР¶Р°С‰РёР№ РІРµСЃСЊ Р·Р°РїСЂРѕСЃ
+     * List, содержащий весь запрос
      */
     private List<String> inputRequest;
     /**
-     * Map, СЃРѕРґРµСЂР¶Р°С‰РёР№ РѕС‚С„Р°СЂРјРѕС‚РёСЂРѕРІР°РЅС‹Рµ РґР°РЅРЅС‹Рµ Р·Р°РїСЂРѕСЃР°: header Рё РµРіРѕ Р·РЅР°С‡РµРЅРёРµ
+     * Map, содержащий отфармотированые данные запроса: header и его значение
      */
     private Map<String, String> httpInfo;
     /**
-     * РЎРѕРґРµСЂР¶РёС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёРµ РґР°РЅРЅС‹Рµ, РїРѕР»СѓС‡РµРЅРЅС‹Рµ РёР· Р·Р°РїСЂРѕСЃР°
+     * Содержит пользовательские данные, полученные из запроса
      */
-    private List<String> requestParameters;
+    private String requestParameters;
     /**
-     * Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ url
+     * Запрашиваемый url
      */
     private String url;
     /**
-     * Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ http РјРµС‚РѕРґ
+     * Запрашиваемый http метод
      */
     private String method;
     /**
-     * true, РµСЃР»Рё РІС…РѕРґРЅРѕР№ Р·Р°РїСЂРѕСЃ РєРѕСЂСЂРµРєС‚РЅС‹Р№ Рё false, РµСЃР»Рё РЅРµРІРµСЂРµРЅ
+     * true, если входной запрос корректный и false, если неверен
      */
     private boolean correctRequest;
     /**
@@ -43,7 +43,6 @@ public class RequestHandler {
     private static Logger log = Logger.getLogger(RequestHandler.class);
 
     public RequestHandler(final InputStream input) {
-        requestParameters = new ArrayList<>();
         inputRequest = new ArrayList<>();
         httpInfo = new HashMap<>();
         correctRequest = false;
@@ -52,9 +51,9 @@ public class RequestHandler {
 
 
     /**
-     * РњРµС‚РѕРґ, С‡РёС‚Р°СЋС‰РёР№ РІС…РѕРґСЏС‰РёР№ Р·Р°РїСЂРѕСЃ.
+     * Метод, читающий входящий запрос.
      *
-     * @param input, СЃРѕРґРµСЂР¶Р°С‰РёР№ РїРѕС‚РѕРє Р±Р°Р№С‚ РІС…РѕРґРЅРѕРіРѕ Р·Р°РїСЂРѕСЃР°.
+     * @param input, содержащий поток байт входного запроса.
      */
     public void readRequest(final InputStream input) {
         getInputRequest(input);
@@ -67,9 +66,9 @@ public class RequestHandler {
 
 
     /**
-     * РњРµС‚РѕРґ, С‡РёС‚Р°СЋС‰РёР№ РІС…РѕРґСЏС‰РёР№ Р·Р°РїСЂРѕСЃ.
+     * Метод, читающий входящий запрос.
      *
-     * @param input, СЃРѕРґРµСЂР¶Р°С‰РёР№ РїРѕС‚РѕРє Р±Р°Р№С‚ РІС…РѕРґРЅРѕРіРѕ Р·Р°РїСЂРѕСЃР°.
+     * @param input, содержащий поток байт входного запроса.
      */
     private void getInputRequest(final InputStream input) {
         int size = 0;
@@ -92,9 +91,9 @@ public class RequestHandler {
 
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ URI РёР· Р·Р°РїСЂРѕСЃР° РєР»РёРµРЅС‚Р°
+     * Метод, получающий URI из запроса клиента
      *
-     * @return url Р·Р°РїСЂРѕСЃР°
+     * @return url запроса
      */
     private String getRequestURI() {
         if (inputRequest.size() != 0) {
@@ -107,10 +106,10 @@ public class RequestHandler {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ headers РёР· Р·Р°РїСЂРѕСЃР° РєР»РёРµРЅС‚Р°.
+     * Метод, формирующий headers из запроса клиента.
      *
-     * @param input - РІС…РѕРґСЏС‰РёР№ РјР°СЃСЃРёРІ СЃС‚СЂРѕРє Р·Р°РїСЂРѕСЃР°
-     * @return СЃРїРёСЃРѕРє, СЃРѕРґРµСЂР¶Р°С‰РёР№ header Рё РµРіРѕ Р·РЅР°С‡РµРЅРёРµ.
+     * @param input - входящий массив строк запроса
+     * @return список, содержащий header и его значение.
      */
     public Map<String, String> getRequestHeaders(List<String> input) {
         for (String request : input) {
@@ -122,9 +121,9 @@ public class RequestHandler {
     }
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ С‚РёРї Http Р·Р°РїСЂРѕСЃР°
+     * Метод, получающий тип Http запроса
      *
-     * @return РјРµС‚РѕРґ http Р·Р°РїСЂРѕСЃР°
+     * @return метод http запроса
      */
     private String getRequestMethod() {
         String method = null;
@@ -134,28 +133,29 @@ public class RequestHandler {
     }
 
     /**
-     * РњРµС‚РѕРґ, С„РѕСЂРјРёСЂСѓСЋС‰РёР№ РІСЃРµ РїР°СЂР°РјРµС‚СЂС‹ РёР· Р·Р°РїСЂСЃРѕ РєР»РёРµРЅС‚Р°
+     * Метод, формирующий все параметры из запрсо клиента
      *
-     * @return requestParameters - РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёРµ РґР°РЅРЅС‹Рµ
+     * @return requestParameters - пользовательские данные
      */
-    private List<String> getRequestParameters() {
-        if (method.equals(HttpMethod.POST.getMethod()))
-            requestParameters = HttpParser.getValues(inputRequest.get(inputRequest.size() - 1));
-        return requestParameters;
+    private String getRequestParameters() {
+        /*if (method.equals(HttpMethod.POST.getMethod()))
+            requestParameters = HttpParser.getValues(inputRequest.get(inputRequest.size() - 1));*/
+        return inputRequest.get(inputRequest.size() - 1);
     }
 
     /**
-     * РњРµС‚РѕРґ, РІРѕР·РІСЂР°С‰Р°СЋС‰РёР№ РїР°СЂР°РјРµС‚СЂС‹ Р·Р°РїСЂРѕСЃР° РІ РІРёРґРµ СЃС‚СЂРѕРєРё.
+     * Метод, возвращающий параметры запроса в виде строки.
      *
-     * @return parameters - РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёРµ РґР°РЅРЅС‹Рµ РІ РІРёРґРµ СЃС‚СЂРѕРєРё
+     * @return parameters - пользовательские данные в виде строки
      */
     public String getRequestParametersToString() {
-        StringBuilder parameters = new StringBuilder();
+        /*StringBuilder parameters = new StringBuilder();
         for (int i = 0; i < requestParameters.size(); i++) {
             parameters.append(requestParameters.get(i));
             parameters.append("\r\n");
         }
-        return parameters.toString();
+        return parameters.toString();*/
+        return requestParameters;
     }
 
     public String getUrl() {
@@ -167,9 +167,9 @@ public class RequestHandler {
     }
 
     /**
-     * РњРµС‚РѕРґ, РїСЂРѕРІРµСЂСЏСЋС‰РёР№ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РІС…РѕРґСЏС‰РµРіРѕ Р·Р°РїСЂРѕСЃР° Рё РІРѕР·РІСЂР°С‰Р°СЋС‰РёР№ true РёР»Рё false
+     * Метод, проверяющий корректность входящего запроса и возвращающий true или false
      *
-     * @return false - РµСЃР»Рё РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РЅРµРІРµСЂРЅС‹, Рё true - РµСЃР»Рё РЅРµ РІРµСЂРЅС‹.
+     * @return false - если входные данные неверны, и true - если не верны.
      */
     public boolean isCorrectRequest() {
         if (correctRequest)

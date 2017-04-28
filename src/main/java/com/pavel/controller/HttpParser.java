@@ -9,56 +9,56 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * РљР»Р°СЃСЃ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІС…РѕРґРЅС‹С… Р·Р°РїСЂРѕСЃРѕРІ РѕС‚ РєР»РёРµРЅС‚Р°, Р° С‚Р°Рє Р¶Рµ РІС‹РґРµР»СЏСЋС‰РёР№ РЅРµРѕР±С…РѕРґРёРјС‹Рµ Р·Р°РіРѕР»РѕРІРєРё РґР»СЏ СЃРµСЂРІРµСЂР°
+ * Класс для проверки входных запросов от клиента, а так же выделяющий необходимые заголовки для сервера
  */
 public class HttpParser {
     /**
-     * РєРѕРЅСЃС‚Р°РЅС‚Р° СЃРѕРґРµСЂР¶Р°С‰Р°СЏ СЃС‚СЂРѕРєСѓ СЂР°Р·РґРµР»РёС‚РµР»СЊ РґР»СЏ Р·Р°РїСЂРѕСЃРѕРІ
+     * константа содержащая строку разделитель для запросов
      */
     private static final String REQUEST_HEADER_SPLIT = ":\\s";
     /**
-     * РєРѕРЅСЃС‚Р°РЅС‚Р° СЃРѕРґРµСЂР¶Р°С‰Р°СЏ СЂРµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РґР»СЏ Р·Р°РїСЂРѕСЃР° СЃРµСЂРІРµСЂСѓ РѕС‚ РєР»РёРµРЅС‚Р°
+     * константа содержащая регулярное выражение для запроса серверу от клиента
      */
     private static final String REQUEST_HEADER = "^[A-Za-z-]+:\\s.*$";
     /**
-     * РєРѕРЅСЃС‚Р°РЅС‚Р° СЃРѕРґРµСЂР¶Р°С‰Р°СЏ СЂРµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РґР»СЏ Р·Р°РїСЂРѕСЃР° URL
+     * константа содержащая регулярное выражение для запроса URL
      */
-    private static final String REQUEST_URL = "^(GET|POST|HEAD|OPTIONS|PUT|PATCH|DELETE|TRACE|CONNECT).+";
+    private static final String REQUEST_URL = "^.+?\\s.+";
     /**
-     * РєРѕРЅСЃС‚Р°РЅС‚Р° СЃРѕРґРµСЂР¶Р°С‰Р°СЏ СЂРµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РґР»СЏ РІС‹Р±РѕСЂР° РјРµС‚РѕРґР° РґР»СЏ Р·Р°РїСЂРѕСЃР°
+     * константа содержащая регулярное выражение для выбора метода для запроса
      */
-    private static final String REQUEST_METHOD = "(GET|POST|HEAD|OPTIONS|PUT|PATCH|DELETE|TRACE|CONNECT).+";
+    private static final String REQUEST_METHOD = ".+?\\s.+";
 
     /**
-     * С€Р°Р±Р»РѕРЅ РґР»СЏ СЂСѓРіСѓР»СЏСЂРЅРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ
+     * шаблон для ругулярного выражения
      *
      * @see HttpParser#REQUEST_HEADER_SPLIT
      */
     private static final Pattern patternSplit = Pattern.compile(REQUEST_HEADER_SPLIT);
     /**
-     * С€Р°Р±Р»РѕРЅ РґР»СЏ СЂСѓРіСѓР»СЏСЂРЅРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ
+     * шаблон для ругулярного выражения
      *
      * @see HttpParser#REQUEST_HEADER
      */
     private static final Pattern patternHeader = Pattern.compile(REQUEST_HEADER);
     /**
-     * С€Р°Р±Р»РѕРЅ РґР»СЏ СЂСѓРіСѓР»СЏСЂРЅРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ
+     * шаблон для ругулярного выражения
      *
      * @see HttpParser#REQUEST_URL
      */
     private static final Pattern patternURL = Pattern.compile(REQUEST_URL);
     /**
-     * С€Р°Р±Р»РѕРЅ РґР»СЏ СЂСѓРіСѓР»СЏСЂРЅРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ
+     * шаблон для ругулярного выражения
      *
      * @see HttpParser#REQUEST_METHOD
      */
     private static final Pattern patternMETHOD = Pattern.compile(REQUEST_METHOD);
 
     /**
-     * РњРµС‚РѕРґ, РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС‰РёР№ РІС…РѕРґРЅРѕР№ Р·Р°РїСЂРѕСЃ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРїРёСЃРєР° headers Рё РёС… Р·РЅР°С‡РµРЅРёР№.
+     * Метод, обрабатывающий входной запрос для получения списка headers и их значений.
      *
-     * @param request Р·Р°РїСЂРѕСЃ РєР»РёРµРЅС‚Р° СЃРµСЂРІРµСЂСѓ
-     * @return РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°Р·РІР°РЅРёРµ РІСЃРµС… Р·Р°РїСЂРѕСЃРѕРІ Рё РёС… СЃРѕРґРµСЂР¶Р°РЅРёСЏ
+     * @param request запрос клиента серверу
+     * @return возвращает название всех запросов и их содержания
      */
     public static Map getSplitRequest(final String request) {
         if (patternHeader.matcher(request).matches()) {
@@ -71,36 +71,36 @@ public class HttpParser {
     }
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ РёР· Р·Р°РїСЂРѕСЃР° url.
+     * Метод, получающий из запроса url.
      *
-     * @param firstStrFromRequest СЃС‚СЂРѕРєР° СЃРѕРґРµСЂР¶Р°С‰Р°СЏ URL
-     * @return url Р·Р°РїСЂРѕСЃР°
+     * @param firstStrFromRequest строка содержащая URL
+     * @return url запроса
      */
     public static String getUrl(final String firstStrFromRequest) {
         if (patternURL.matcher(firstStrFromRequest).matches()) {
             return firstStrFromRequest.substring(firstStrFromRequest.indexOf(" ") + 1, firstStrFromRequest.lastIndexOf(" "));
         }
-        return null;
+        return "wrong_url";
     }
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ РёР· Р·Р°РїСЂРѕСЃР° http РјРµС‚РѕРґ
+     * Метод, получающий из запроса http метод
      *
-     * @param request СЃС‚СЂРѕРєР° СЃРѕРґРµСЂР¶Р°С‰Р°СЏ URL
-     * @return method Р·Р°РїСЂРѕСЃР°
+     * @param request строка содержащая URL
+     * @return method запроса
      */
     public static String getMethod(final String request) {
         if (patternMETHOD.matcher(request).matches()) {
             return request.substring(0, request.indexOf(" "));
         }
-        return null;
+        return "wrong_method";
     }
 
     /**
-     * РњРµС‚РѕРґ, РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС€РёР№ РїРѕР»СѓС‡РµРЅРЅСѓСЋ url Рё РІРѕР·РІСЂР°С‰Р°СЋС€РёР№ РїСѓС‚СЊ Рє СЂРµСЃСѓСЂСЃСѓ.
+     * Метод, обрабатываюший полученную url и возвращаюший путь к ресурсу.
      *
-     * @param url СЃС‚СЂРѕРєР° URL
-     * @return РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ
+     * @param url строка URL
+     * @return путь к файлу
      */
     public static String getPath(String url) {
         String path = ServerPath.PAGE_PATH;
@@ -121,10 +121,10 @@ public class HttpParser {
     }
 
     /**
-     * РњРµС‚РѕРґ, РїРѕР»СѓС‡Р°СЋС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёРµ РґР°РЅРЅС‹Рµ РёР· Р·Р°РїСЂРѕСЃР°.
+     * Метод, получающий пользовательские данные из запроса.
      *
-     * @param request РїР°СЂР°РјРµС‚СЂ Р·Р°РїСЂРѕСЃР°.
-     * @return РІС…РѕРґРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹
+     * @param request параметр запроса.
+     * @return входные параметры
      */
     public static List<String> getValues(String request) {
         List<String> parameters = new ArrayList<>();

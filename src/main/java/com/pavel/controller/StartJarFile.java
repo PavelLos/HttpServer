@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import java.io.*;
 
 /**
- * РљР»Р°СЃСЃ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РІС‹Р·РѕРІ РїРѕРґРїСЂРѕРіСЂР°РјРј
+ * Класс, отвечающий за вызов подпрограмм
  */
 public class StartJarFile {
     /**
@@ -30,43 +30,43 @@ public class StartJarFile {
     private static StartJarFile instance = new StartJarFile();
 
     /**
-     * РџРѕР»СѓС‡РµРЅРёРµ РѕР±СЉРµРєС‚Р°
+     * Получение объекта
      *
-     * @return РѕР±СЉРµРєС‚ РєР»Р°СЃСЃР° StartJarFile
+     * @return объект класса StartJarFile
      */
     public static StartJarFile getInstance() {
         return instance;
     }
 
     /**
-     * РЎРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р°
+     * Создание объекта
      */
     private StartJarFile() {
         process = null;
     }
 
     /**
-     * Р—Р°РїСѓСЃРє СЃС‚РѕСЂРѕРЅРЅРµР№ java-РїСЂРѕРіСЂР°РјРјС‹
+     * Запуск сторонней java-программы
      *
-     * @param path         - РїСѓС‚СЊ Рє Р·Р°РїСЂР°С€РёРІР°РµРјРѕРјСѓ РґРѕРєСѓРјРµРЅС‚Сѓ
-     * @param documentText - РЅРµРѕР±С…РѕРґРёРјС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РЅР° СЃС‚СЂР°РЅРёС†Рµ
+     * @param path         - путь к запрашиваемому документу
+     * @param documentText - необходимые данные для отображения на странице
      */
     private void startProcess(String path, String documentText) {
         try {
             process = createProcess(path, documentText).start();
         } catch (IOException e) {
-            log.error("Р—Р°РїСѓСЃРє jar РЅРµ СѓРґР°Р»СЃСЏ");
-            ServerWindow.getInstance().printInfo("Р—Р°РїСѓСЃРє jar РЅРµ СѓРґР°Р»СЃСЏ");
+            log.error("Запуск jar не удался");
+            ServerWindow.getInstance().printInfo("Запуск jar не удался");
         }
         inputStream = process.getInputStream();
     }
 
     /**
-     * РЎРѕР·РґР°РЅРёРµ РїСЂРѕС†РµСЃСЃР° РґР»СЏ Р·Р°РїСѓСЃРєР° СЃС‚РѕСЂРѕРЅРЅРµР№ java-РїСЂРѕРіСЂР°РјРјС‹
+     * Создание процесса для запуска сторонней java-программы
      *
-     * @param path         - РїСѓС‚СЊ Рє Р·Р°РїСЂР°С€РёРІР°РµРјРѕРјСѓ РґРѕРєСѓРјРµРЅС‚Сѓ
-     * @param documentText - РЅРµРѕР±С…РѕРґРёРјС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РЅР° СЃС‚СЂР°РЅРёС†Рµ
-     * @return processBuilder - РїСЂРѕС†РµСЃСЃ, РіРѕС‚РѕРІС‹Р№ РґР»СЏ Р·Р°РїСѓСЃРєР°
+     * @param path         - путь к запрашиваемому документу
+     * @param documentText - необходимые данные для отображения на странице
+     * @return processBuilder - процесс, готовый для запуска
      */
     private ProcessBuilder createProcess(String path, String documentText) {
         String page = path.substring(path.lastIndexOf("/") + 1);
@@ -83,11 +83,11 @@ public class StartJarFile {
     }
 
     /**
-     * Р§С‚РµРЅРёРµ СЃРѕР·РґР°РЅРЅРѕР№ СЃСЂР°РЅРёС†С‹.
+     * Чтение созданной сраницы.
      *
-     * @return document - СЃРѕРґРµСЂР¶Р°РЅРёРµ РґРѕРєСѓРјРµРЅС‚Р° РґР»СЏ РѕС‚РїСЂР°РІРєРё РєР»РёРµРЅС‚Сѓ
+     * @return document - содержание документа для отправки клиенту
      */
-    private byte[] readCreatedFile() {
+    private String readCreatedFile() {
         String line = "";
         StringBuilder document = new StringBuilder();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -97,20 +97,20 @@ public class StartJarFile {
                     document.append(line);
             }
         } catch (IOException e) {
-            log.error("РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РґРѕРєСѓРјРµРЅС‚Р°");
-            ServerWindow.getInstance().printInfo("РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РґРѕРєСѓРјРµРЅС‚Р°");
+            log.error("Ошибка чтения документа");
+            ServerWindow.getInstance().printInfo("Ошибка чтения документа");
         }
-        return document.toString().getBytes();
+        return document.toString();
     }
 
     /**
-     * РџРѕР»СѓС‡РµРЅРёРµ Р·Р°РїСЂС€РёРІР°РµРјРѕРіРѕ РґРѕРєСѓРјРµРЅС‚Р° РґР»СЏ РѕС‚РїСЂР°РІРєРё РєР»РёРµРЅС‚Сѓ
+     * Получение запршиваемого документа для отправки клиенту
      *
-     * @param path         - Р·Р°РїСЂР°С€РёРІР°РµРјС‹Р№ СЂРµСЃСѓСЂСЃ
-     * @param documentText - СЃРѕРґРµСЂР¶Р°РЅРёРµ РґРѕРєСѓРјРµРЅС‚Р°
-     * @return РґРѕРєСѓРјРµРЅС‚ РІ РІРёРґРµ РјР°СЃСЃРёРІР° Р±Р°Р№С‚
+     * @param path         - запрашиваемый ресурс
+     * @param documentText - содержание документа
+     * @return документ в виде массива байт
      */
-    public byte[] getDocument(String path, String documentText) {
+    public String getDocument(String path, String documentText) {
         startProcess(Configurations.getInstance().getPathToServer() + path, documentText);
         return readCreatedFile();
     }

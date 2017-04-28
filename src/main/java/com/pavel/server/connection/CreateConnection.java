@@ -20,7 +20,7 @@ public class CreateConnection extends Thread {
     private Socket clientSocket;
 
     /**
-     * РџРѕСЂС‚ РґР»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
+     * Порт для подключения
      */
     public int PORT = 8080;
 
@@ -30,7 +30,7 @@ public class CreateConnection extends Thread {
     private static final Logger log = Logger.getLogger(CreateConnection.class);
 
     /**
-     * РЎРѕР·РґРЅРёРµ СЌРєР·РµРјРїР»СЏСЂР°
+     * Создние экземпляра
      */
     public CreateConnection() {
         serverSocket = null;
@@ -39,7 +39,7 @@ public class CreateConnection extends Thread {
     }
 
     /**
-     * РЎРѕР·РґР°РЅРёРµ СЃРµСЂРІРµСЂР° Рё РїРѕРґРєР»СЋС‡РµРЅРёРµ РєР»РёРµРЅС‚РѕРІ Рє СЃРµСЂРІРµСЂСѓ
+     * Создание сервера и подключение клиентов к серверу
      */
     @Override
     public void run() {
@@ -70,7 +70,7 @@ public class CreateConnection extends Thread {
     }
 
     /**
-     * РћСЃС‚Р°РЅРѕРІРєР° СЂР°Р±РѕС‚С‹ СЃРµСЂРІРµСЂР°
+     * Остановка работы сервера
      */
     public void stopServer() {
         if (serverSocket != null) {

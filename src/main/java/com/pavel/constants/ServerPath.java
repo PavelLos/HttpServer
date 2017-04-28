@@ -4,7 +4,7 @@ package com.pavel.constants;
 import com.pavel.configurations.Configurations;
 
 /**
- * РџРµСЂРµС‡РµСЃР»РµРЅРёРµ РїСѓС‚РµР№ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+ * Перечесление путей по умолчанию
  */
 public class ServerPath {
     public static String PAGE_PATH = Configurations.getInstance().getPagesPath();
