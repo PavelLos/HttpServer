@@ -31,22 +31,47 @@ public class ResponseHandler {
      */
     public byte[] createGetResponse(String url) {
         String path = HttpParser.getPath(url);
-        path = checkConfigPage(path);
+        //path = checkConfigPage(path);
         byte[] document;
         byte[] headers;
         if (checkPath(path)) {
             if (!checkJarPath(path)) {
                 log.info("Request success: " + HttpStatus.STATUS_200);
                 ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
+                path = checkConfigPage(path);
                 document = createDocument(path);
                 headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
                         document.length,
                         getContentType(path));
             } else {
+                if (checkJarPath(path)&&path.contains("error_show")) {
+                    return runJar(path, "");
+                }
                 return notAllowed(url);
             }
         } else {
             return notFound(url);
+        }
+        return getResponseByte(headers, document);
+    }
+
+    private byte[] runJar(String path, String documentText){
+        //path = checkConfigPage(path);
+        byte[] document;
+        byte[] headers;
+        ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
+        String doc =  StartJarFile.getInstance().getDocument(path, documentText);
+        if(!(doc.contains("Exception")||doc.contains("Main"))){
+            document = doc.getBytes();
+            headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
+                    document.length,
+                    getContentType(path));
+        }
+        else {
+            document = doc.getBytes();
+            headers = createHeaders(HttpStatus.STATUS_500.getConstant(),
+                    document.length,
+                    getContentType(path));
         }
         return getResponseByte(headers, document);
     }
@@ -60,15 +85,16 @@ public class ResponseHandler {
      */
     public byte[] createPostResponse(String url, String documentText) {
         String path = HttpParser.getPath(url);
-        path = checkConfigPage(path);
+        //path = checkConfigPage(path);
         byte[] document;
         byte[] headers;
         if (checkPath(path)) {
             if (checkJarPath(path)) {
                 log.info("Request success: " + HttpStatus.STATUS_200);
-                ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
+                //
+                /*ServerWindow.getInstance().printInfo("Request success: " + HttpStatus.STATUS_200);
                 String doc =  StartJarFile.getInstance().getDocument(path, documentText);
-                if(!doc.contains("Exception")){
+                if(!(doc.contains("Exception")||doc.contains("Main"))){
                     document = doc.getBytes();
                     headers = createHeaders(HttpStatus.STATUS_200.getConstant(),
                             document.length,
@@ -79,15 +105,15 @@ public class ResponseHandler {
                     headers = createHeaders(HttpStatus.STATUS_500.getConstant(),
                             document.length,
                             getContentType(path));
-                }
-
+                }*/
+                return runJar(path, documentText);
             } else {
                 return notAllowed(url);
             }
         } else {
             return notFound(url);
         }
-        return getResponseByte(headers, document);
+        //return getResponseByte(headers, document);
     }
 
     /**
@@ -270,7 +296,7 @@ public class ResponseHandler {
     private String checkConfigPage(String path) {
         String pagePath = path.substring(0, path.lastIndexOf("/") + 1);
         if (ConfigReader.checkPage(path.substring(path.lastIndexOf("/") + 1))) {
-            if (!ConfigReader.getJarNameByPage(path.substring(path.lastIndexOf("/") + 1)).contains(".jar"))
+            //if (!ConfigReader.getJarNameByPage(path.substring(path.lastIndexOf("/") + 1)).contains(".jar"))
                 return pagePath + ConfigReader.getJarNameByPage(path.substring(path.lastIndexOf("/") + 1));
         }
         return path;

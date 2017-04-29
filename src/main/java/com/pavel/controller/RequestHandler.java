@@ -138,9 +138,12 @@ public class RequestHandler {
      * @return requestParameters - пользовательские данные
      */
     private String getRequestParameters() {
-        /*if (method.equals(HttpMethod.POST.getMethod()))
-            requestParameters = HttpParser.getValues(inputRequest.get(inputRequest.size() - 1));*/
-        return inputRequest.get(inputRequest.size() - 1);
+        if (method.equals(HttpMethod.POST.getMethod())) {
+            //requestParameters = HttpParser.getValues(inputRequest.get(inputRequest.size() - 1));
+            if (!inputRequest.get(inputRequest.size() - 1).contains("Cookie"))
+                return inputRequest.get(inputRequest.size() - 1);
+        }
+        return "";
     }
 
     /**

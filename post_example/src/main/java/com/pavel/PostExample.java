@@ -18,28 +18,19 @@ public class PostExample {
         return instance;
     }
 
-    public void createDocument(String path, String documentText) {
+    public StringBuilder createDocument(String path, String documentText) {
         StringBuilder document = new StringBuilder();
-        String fileString = "";
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(path));
-            while (true) {
-                try {
-                    fileString = reader.readLine();
-                    if (fileString == null)
-                        break;
-                    document.append(fileString);
-                    if (fileString.equals("<body>"))
-                        document.append(createTable(documentText));
-                } catch (IOException e) {
-                    createExeption(e.toString());
-                }
-            }
-        } catch (FileNotFoundException e) {
-            createExeption(e.toString());
-        }
-        sendDocument(document);
+        document.append("<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>Show Message</title>\n" +
+                "</head>\n" +
+                "<body>\n");
+        document.append(createTable(documentText));
+        document.append("</body>\n" +
+                "</html>");
+        return document;
     }
 
     private String createTable(String documentText) {
@@ -78,15 +69,9 @@ public class PostExample {
                 "</head>\n" +
                 "<body>\n");
 
-        document.append(e);
 
         document.append("</body>\n" +
                 "</html>");
-        sendDocument(document);
-    }
-
-    private void sendDocument(StringBuilder document) {
-        printStream.print(document);
     }
 
 }
